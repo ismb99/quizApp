@@ -1,0 +1,26 @@
+.container {
+  background: rgb(232, 220, 220);
+  margin: 25px;
+  padding: 30px;
+}
+
+.card {
+  padding: 10px 20px;
+  border: black solid 1px;
+  width: 100px;
+  background: blue;
+  color: white;
+  margin-right: 80px;
+}
+
+.card-row {
+  display: flex;
+}
+
+.correct-answer {
+  padding: 10px 20px;
+  border: black solid 1px;
+  width: 100px;
+  background: rgb(5, 205, 71);
+  color: rgb(3, 0, 0);
+}
