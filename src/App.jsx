@@ -4,6 +4,10 @@ import "./index.css";
 
 export default function App() {
   const [quizData, setQuizData] = useState([]);
+  const [allAnswers, setAllAnswers] = useState([]);
+
+  console.log(quizData);
+  console.log(allAnswers);
 
   useEffect(() => {
     fetch("https://opentdb.com/api.php?amount=5&difficulty=easy&type=multiple")
@@ -16,7 +20,15 @@ export default function App() {
             he.decode(answer)
           ),
         }));
+
         setQuizData(decodedData);
+
+        // Create an array to hold all answers
+        const combinedAnswers = decodedData.reduce((acc, quiz) => {
+          return acc.concat(quiz.incorrect_answers, quiz.correct_answer);
+        }, []);
+
+        setAllAnswers(combinedAnswers); // Update the state with all answers
       });
   }, []);
 
