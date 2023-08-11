@@ -7,12 +7,15 @@ export default function Question(props) {
         <h2>{props.question}</h2>
       </div>
       <div className="card-row">
-        {props.incorrect_answers.map((incorrectAnswer, iaIndex) => (
-          <p className="card" key={iaIndex}>
-            {incorrectAnswer}
+        {props.answers.map((answer, answerIndex) => (
+          <p
+            onClick={() => props.holdAnswer(answerIndex)}
+            className="card"
+            key={answerIndex}
+          >
+            {answer} <span> Index: {answerIndex}</span>
           </p>
         ))}
-        <p className="correct-answer">{props.correct_answer}</p>
       </div>
       <hr />
     </>

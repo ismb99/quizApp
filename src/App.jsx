@@ -7,6 +7,8 @@ import Question from "./components/Question";
 export default function App() {
   const [quizData, setQuizData] = useState([]);
 
+  console.log("Hela array med svar ", quizData);
+
   useEffect(() => {
     fetch("https://opentdb.com/api.php?amount=5&difficulty=easy&type=multiple")
       .then((res) => res.json())
@@ -20,7 +22,7 @@ export default function App() {
             he.decode(quiz.correct_answer),
           ],
           isSelected: false,
-          id: nanoid(),
+          // id: nanoid(),
         }));
         // filter out old correct_answer & incorrect_answers
 
@@ -28,12 +30,10 @@ export default function App() {
       });
   }, []);
 
-  function holdAnswer() {
-    quizData.map((quiz) => {
-      console.log("Id", quiz.id);
-      console.log("Rätt svar", quiz.correct_answer);
-      quiz.answers.map((answer) => {
-        console.log("Svar", answer);
+  function holdAnswer(id) {
+    quizData.forEach((quiz) => {
+      quiz.answers.forEach((answer, answerIndex) => {
+        return id === answerIndex ? console.log(answer) : null;
       });
     });
   }
@@ -49,6 +49,7 @@ export default function App() {
       type={quiz.type}
       incorrect_answers={quiz.incorrect_answers}
       answers={quiz.answers}
+      holdAnswer={holdAnswer}
     />
   ));
 
