@@ -7,7 +7,14 @@ export default function App() {
   const [allAnswers, setAllAnswers] = useState([]);
 
   console.log(quizData);
-  console.log(allAnswers);
+
+  // const combinedAnswers = [];
+  // function combineArray() {
+  //   for (let quiz of quizData) {
+  //     combinedAnswers.push(...quiz.incorrect_answers, quiz.correct_answer);
+  //   }
+  //   return combinedAnswers;
+  // }
 
   useEffect(() => {
     fetch("https://opentdb.com/api.php?amount=5&difficulty=easy&type=multiple")
@@ -19,16 +26,16 @@ export default function App() {
           incorrect_answers: quiz.incorrect_answers.map((answer) =>
             he.decode(answer)
           ),
+          correct_answer: he.decode(quiz.correct_answer),
+          all_answers: [
+            ...quiz.incorrect_answers.map((answer) => ({
+              text: answer,
+              isCorrect: false,
+            })),
+            { text: quiz.correct_answer, isCorrect: true },
+          ],
         }));
-
         setQuizData(decodedData);
-
-        // Create an array to hold all answers
-        const combinedAnswers = decodedData.reduce((acc, quiz) => {
-          return acc.concat(quiz.incorrect_answers, quiz.correct_answer);
-        }, []);
-
-        setAllAnswers(combinedAnswers); // Update the state with all answers
       });
   }, []);
 
