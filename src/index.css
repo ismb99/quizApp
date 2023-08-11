@@ -1,7 +1,8 @@
 .container {
-  background: rgb(232, 220, 220);
+  background: rgb(94, 74, 74);
   margin: 25px;
   padding: 30px;
+  text-align: center;
 }
 
 .card {
@@ -12,11 +13,8 @@
   margin-right: 20px;
 }
 .quiz-info {
-  margin: 20 auto;
-  border: red solid 2px;
-  padding: 20px;
+  padding: 10px 20px;
   color: white;
-  background: black;
 }
 
 .card-row {

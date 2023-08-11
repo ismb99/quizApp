@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from "react";
 import he from "he"; // Import the "he" library
+import { nanoid } from "nanoid";
 import "./index.css";
 import Question from "./components/Question";
 
 export default function App() {
   const [quizData, setQuizData] = useState([]);
-
-  console.log(quizData);
 
   useEffect(() => {
     fetch("https://opentdb.com/api.php?amount=5&difficulty=easy&type=multiple")
@@ -20,6 +19,8 @@ export default function App() {
             ...quiz.incorrect_answers.map((answer) => he.decode(answer)),
             he.decode(quiz.correct_answer),
           ],
+          isSelected: false,
+          id: nanoid(),
         }));
         // filter out old correct_answer & incorrect_answers
 
@@ -27,8 +28,17 @@ export default function App() {
       });
   }, []);
 
-  // Render Question component
+  function holdAnswer() {
+    quizData.map((quiz) => {
+      console.log("Id", quiz.id);
+      console.log("Rätt svar", quiz.correct_answer);
+      quiz.answers.map((answer) => {
+        console.log("Svar", answer);
+      });
+    });
+  }
 
+  holdAnswer();
   const questionElements = quizData.map((quiz, index) => (
     <Question
       key={index}
@@ -41,27 +51,6 @@ export default function App() {
       answers={quiz.answers}
     />
   ));
-
-  // const renderQuizItems = () => {
-  //   return quizData.map((quiz, index) => (
-  //     <div className="quiz-container" key={index}>
-  //       <div className="quiz-info">
-  //         <h2>{quiz.question}</h2>
-  //       </div>
-  //       <div className="card-container">
-  //         <div className="card-row">
-  //           {quiz.incorrect_answers.map((incorrectAnswer, iaIndex) => (
-  //             <p className="card" key={iaIndex}>
-  //               {incorrectAnswer}
-  //             </p>
-  //           ))}
-  //           <p className="correct-answer">{quiz.correct_answer}</p>
-  //         </div>
-  //         <hr />
-  //       </div>
-  //     </div>
-  //   ));
-  // };
 
   return (
     <div className="container">
