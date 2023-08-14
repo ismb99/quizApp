@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import he from "he"; // Import the "he" library
+import he from "he";
 import { nanoid } from "nanoid";
 import "./index.css";
 import Question from "./components/Question";
@@ -7,6 +7,10 @@ import Question from "./components/Question";
 export default function App() {
   const [quizData, setQuizData] = useState([]);
   const [allAnswers, setAllAnswers] = useState([]); // Håll reda på alla svar här
+  const [correctAnswers, setCorrectAnswers] = useState([]);
+
+  console.log(quizData);
+  console.log(correctAnswers);
 
   useEffect(() => {
     fetch("https://opentdb.com/api.php?amount=5&difficulty=easy&type=multiple")
@@ -20,25 +24,12 @@ export default function App() {
             ...quiz.incorrect_answers.map((answer) => he.decode(answer)),
             he.decode(quiz.correct_answer),
           ],
-          isSelected: false,
         }));
-
         setQuizData(decodedData);
+        const correctAnswers = decodedData.map((quiz) => quiz.correct_answer);
+        setCorrectAnswers(correctAnswers);
       });
   }, []);
-
-  // function updateAllAnswers(question, answer) {
-  //   setAllAnswers((prevAnswers) => [
-  //     ...prevAnswers,
-  //     { question: question, answer: answer },
-  //   ]);
-  // }
-
-  function handleChange(event) {
-    const { value, type, checked } = event.target;
-    const checkValue = type === "checkbox" ? checked : value;
-    saveAllAnswers(checkValue);
-  }
 
   function saveAllAnswers(currentValue) {
     setAllAnswers((prevState) => {
@@ -49,17 +40,16 @@ export default function App() {
   const questionElements = quizData.map((quiz, index) => (
     <Question
       key={index}
-      category={quiz.category}
+      // category={quiz.category}
       correct_answer={quiz.correct_answer}
-      difficulty={quiz.difficulty}
+      // difficulty={quiz.difficulty}
       question={quiz.question}
-      type={quiz.type}
+      // type={quiz.type}
       incorrect_answers={quiz.incorrect_answers}
       answers={quiz.answers}
-      // updateAllAnswers={updateAllAnswers} // Skicka med funktionen som prop
       saveAllAnswers={saveAllAnswers}
       allAnswers={allAnswers}
-      handleChange={handleChange}
+      // handleChange={handleChange}
     />
   ));
 

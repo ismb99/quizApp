@@ -2,22 +2,12 @@ import { useState } from "react";
 import { nanoid } from "nanoid";
 
 export default function Question(props) {
-  // const [selectedValue, setSelectedValue] = useState("");
-  // const [allAnswers, setAllAnswers] = useState([]); flyttar till app
-
-  console.log("Alla svar", props.allAnswers);
-
-  // function handleChange(event) {
-  //   const { value, type, checked } = event.target;
-  //   const checkValue = type === "checkbox" ? checked : value;
-  //   props.saveAllAnswers(checkValue);
-  // }
-
-  // function saveAllAnswers(currentValue) {
-  //   setAllAnswers((prevState) => {
-  //     return [...prevState, currentValue];
-  //   });
-  // }
+  // for radio input
+  function handleChange(event) {
+    const { value, type, checked } = event.target;
+    const checkValue = type === "checkbox" ? checked : value;
+    props.saveAllAnswers(checkValue);
+  }
 
   return (
     <>
@@ -37,7 +27,7 @@ export default function Question(props) {
                 value={answer}
                 checked={props.allAnswers[props.question] === answer} // This is controlled component. compare state value(selectedValue) with answer. I radio
                 // button value is sames as answer then checked will be true and tells react that this radio button have been choosed. React will controll the state
-                onChange={props.answerhandleChange}
+                onChange={handleChange}
               />
               <label
                 className="radio-button-label"
