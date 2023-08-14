@@ -1,24 +1,23 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { nanoid } from "nanoid";
 
 export default function Question(props) {
-  const [selectedValue, setSelectedValue] = useState("");
-  const [allAnswers, setAllAnswers] = useState([]);
+  // const [selectedValue, setSelectedValue] = useState("");
+  // const [allAnswers, setAllAnswers] = useState([]); flyttar till app
 
-  console.log("Alla svar", allAnswers);
+  console.log("Alla svar", props.allAnswers);
 
-  function handleChange(event) {
-    const { value, type, checked } = event.target;
-    const checkValue = type === "checkbox" ? checked : value;
-    setSelectedValue(checkValue);
-    saveAllAnswers(checkValue);
-  }
+  // function handleChange(event) {
+  //   const { value, type, checked } = event.target;
+  //   const checkValue = type === "checkbox" ? checked : value;
+  //   props.saveAllAnswers(checkValue);
+  // }
 
-  function saveAllAnswers(currentValue) {
-    setAllAnswers((prevState) => {
-      return [...prevState, currentValue];
-    });
-  }
+  // function saveAllAnswers(currentValue) {
+  //   setAllAnswers((prevState) => {
+  //     return [...prevState, currentValue];
+  //   });
+  // }
 
   return (
     <>
@@ -36,9 +35,9 @@ export default function Question(props) {
                 //dio inputs with the same name attribute are grouped together so that you can only pick 1 value among them.
                 name={props.question} //Name have to bee same on alla radio button to limit choice to one
                 value={answer}
-                checked={selectedValue[props.question] === answer} // This is controlled component. compare state value(selectedValue) with answer. I radio
+                checked={props.allAnswers[props.question] === answer} // This is controlled component. compare state value(selectedValue) with answer. I radio
                 // button value is sames as answer then checked will be true and tells react that this radio button have been choosed. React will controll the state
-                onChange={handleChange}
+                onChange={props.answerhandleChange}
               />
               <label
                 className="radio-button-label"

@@ -6,6 +6,7 @@ import Question from "./components/Question";
 
 export default function App() {
   const [quizData, setQuizData] = useState([]);
+  const [allAnswers, setAllAnswers] = useState([]); // Håll reda på alla svar här
 
   useEffect(() => {
     fetch("https://opentdb.com/api.php?amount=5&difficulty=easy&type=multiple")
@@ -26,6 +27,25 @@ export default function App() {
       });
   }, []);
 
+  // function updateAllAnswers(question, answer) {
+  //   setAllAnswers((prevAnswers) => [
+  //     ...prevAnswers,
+  //     { question: question, answer: answer },
+  //   ]);
+  // }
+
+  function handleChange(event) {
+    const { value, type, checked } = event.target;
+    const checkValue = type === "checkbox" ? checked : value;
+    saveAllAnswers(checkValue);
+  }
+
+  function saveAllAnswers(currentValue) {
+    setAllAnswers((prevState) => {
+      return [...prevState, currentValue];
+    });
+  }
+
   const questionElements = quizData.map((quiz, index) => (
     <Question
       key={index}
@@ -36,6 +56,10 @@ export default function App() {
       type={quiz.type}
       incorrect_answers={quiz.incorrect_answers}
       answers={quiz.answers}
+      // updateAllAnswers={updateAllAnswers} // Skicka med funktionen som prop
+      saveAllAnswers={saveAllAnswers}
+      allAnswers={allAnswers}
+      handleChange={handleChange}
     />
   ));
 
