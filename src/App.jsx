@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import he from "he";
-import { nanoid } from "nanoid";
 import "./index.css";
 import Question from "./components/Question";
 
@@ -8,9 +7,9 @@ export default function App() {
   const [quizData, setQuizData] = useState([]);
   const [allAnswers, setAllAnswers] = useState([]); // Håll reda på alla svar här
   const [correctAnswers, setCorrectAnswers] = useState([]);
+  const [score, setScore] = useState(0);
 
-  console.log(quizData);
-  console.log(correctAnswers);
+  console.log(allAnswers);
 
   useEffect(() => {
     fetch("https://opentdb.com/api.php?amount=5&difficulty=easy&type=multiple")
@@ -32,30 +31,52 @@ export default function App() {
   }, []);
 
   function saveAllAnswers(currentValue) {
-    setAllAnswers((prevState) => {
-      return [...prevState, currentValue];
-    });
+    if (!allAnswers.includes(currentValue)) {
+      setAllAnswers((prevState) => {
+        if (prevState.length < 5) {
+          return [...prevState, currentValue];
+        }
+        return prevState;
+      });
+    }
+  }
+
+  function compareArrays(a, b) {
+    let count = 0;
+    if (a.length !== b.length) return false;
+    else {
+      for (var i = 0; i < a.length; i++) {
+        if (a[i] === b[i]) count = count + 1;
+      }
+    }
+    setScore(count);
+    console.log(`You got ${count} of ${a.length}`);
   }
 
   const questionElements = quizData.map((quiz, index) => (
     <Question
       key={index}
-      // category={quiz.category}
       correct_answer={quiz.correct_answer}
-      // difficulty={quiz.difficulty}
       question={quiz.question}
-      // type={quiz.type}
       incorrect_answers={quiz.incorrect_answers}
       answers={quiz.answers}
       saveAllAnswers={saveAllAnswers}
       allAnswers={allAnswers}
-      // handleChange={handleChange}
     />
   ));
 
   return (
     <div className="container">
       {quizData.length > 0 ? questionElements : <p>Loading...</p>}
+
+      <div>
+        <button onClick={() => compareArrays(allAnswers, correctAnswers)}>
+          Check answers
+        </button>
+        <h2>
+          You got: {score} of {allAnswers.length}
+        </h2>
+      </div>
     </div>
   );
 }

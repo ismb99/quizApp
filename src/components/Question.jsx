@@ -11,9 +11,7 @@ export default function Question(props) {
 
   return (
     <>
-      <div className="quiz-info">
-        <h2>{props.question}</h2>
-      </div>
+      <h2>{props.question}</h2>
       <div className="card-row">
         {props.answers.map((answer, answerIndex) => {
           const uniqueId = nanoid(); // Generate unik nanoid
@@ -22,8 +20,8 @@ export default function Question(props) {
               <input
                 type="radio"
                 id={uniqueId} // Use same unik nanoId
-                //dio inputs with the same name attribute are grouped together so that you can only pick 1 value among them.
-                name={props.question} //Name have to bee same on alla radio button to limit choice to one
+                //radio inputs with the same name attribute are grouped together so that you can only pick 1 value among them.
+                name={`answers ${props.question} - ${answerIndex}`} //Name have to bee same on alla radio button to limit choice to one
                 value={answer}
                 checked={props.allAnswers[props.question] === answer} // This is controlled component. compare state value(selectedValue) with answer. I radio
                 // button value is sames as answer then checked will be true and tells react that this radio button have been choosed. React will controll the state
