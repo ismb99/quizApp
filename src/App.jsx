@@ -2,14 +2,14 @@ import React, { useState, useEffect } from "react";
 import he from "he";
 import "./index.css";
 import Question from "./components/Question";
+import Start from "./components/Start";
 
 export default function App() {
   const [quizData, setQuizData] = useState([]);
   const [allAnswers, setAllAnswers] = useState([]); // Håll reda på alla svar här
   const [correctAnswers, setCorrectAnswers] = useState([]);
   const [score, setScore] = useState(0);
-
-  console.log(allAnswers);
+  const [startGame, setStartGame] = useState(true);
 
   useEffect(() => {
     fetch("https://opentdb.com/api.php?amount=5&difficulty=easy&type=multiple")
@@ -53,6 +53,10 @@ export default function App() {
     console.log(`You got ${count} of ${a.length}`);
   }
 
+  function startQuiz() {
+    setStartGame(false);
+  }
+
   const questionElements = quizData.map((quiz, index) => (
     <Question
       key={index}
@@ -67,16 +71,23 @@ export default function App() {
 
   return (
     <div className="container">
-      {quizData.length > 0 ? questionElements : <p>Loading...</p>}
-
-      <div>
-        <button onClick={() => compareArrays(allAnswers, correctAnswers)}>
-          Check answers
-        </button>
-        <h2>
-          You got: {score} of {allAnswers.length}
-        </h2>
-      </div>
+      {startGame ? (
+        <Start startQuiz={startQuiz} />
+      ) : quizData.length > 0 ? (
+        <div>
+          {questionElements}
+          <div>
+            <button onClick={() => compareArrays(allAnswers, correctAnswers)}>
+              Check answers
+            </button>
+            <h2>
+              You got: {score} of {allAnswers.length}
+            </h2>
+          </div>
+        </div>
+      ) : (
+        <p>Loading...</p>
+      )}
     </div>
   );
 }
