@@ -80,16 +80,23 @@ button {
 }
 
 /* Media query for mobile screens */
+/* Media query for mobile screens */
 @media screen and (max-width: 768px) {
-  .container {
-    margin: 10px;
-    padding: 15px;
+  .quiz-text {
+    font-size: 20px; /* Adjust quiz info font size for mobile */
   }
 
-  .card,
-  .correct-answer {
-    width: calc(50% - 20px); /* Display two cards per row */
-    margin-right: 0;
-    margin-bottom: 10px;
+  .card-row {
+    flex-direction: column; /* Stack cards vertically on smaller screens */
+  }
+
+  .radio-toolbar {
+    display: flex;
+    flex-direction: column; /* Stack radio inputs and labels vertically */
+  }
+
+  .radio-toolbar label {
+    margin: 5px auto; /* Adjust margin for better spacing */
+    text-align: center; /* Center radio button labels */
   }
 }

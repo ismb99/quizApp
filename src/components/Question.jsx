@@ -11,7 +11,7 @@ export default function Question(props) {
 
   return (
     <>
-      <h2>{props.question}</h2>
+      <h2 className="quiz-text">{props.question}</h2>
       <div className="card-row">
         {props.answers.map((answer, answerIndex) => {
           const uniqueId = nanoid(); // Generate unik nanoid
