@@ -70,24 +70,30 @@ export default function App() {
   ));
 
   return (
-    <div className="container">
+    <>
       {startGame ? (
         <Start startQuiz={startQuiz} />
-      ) : quizData.length > 0 ? (
-        <div>
-          {questionElements}
-          <div>
-            <button onClick={() => compareArrays(allAnswers, correctAnswers)}>
-              Check answers
-            </button>
-            <h2>
-              You got: {score} of {allAnswers.length}
-            </h2>
-          </div>
-        </div>
       ) : (
-        <p>Loading...</p>
+        <div className="container">
+          {quizData.length > 0 ? (
+            <div>
+              {questionElements}
+              <div>
+                <button
+                  onClick={() => compareArrays(allAnswers, correctAnswers)}
+                >
+                  Check answers
+                </button>
+                <h2>
+                  You got: {score} of {allAnswers.length}
+                </h2>
+              </div>
+            </div>
+          ) : (
+            <p>Loading...</p>
+          )}
+        </div>
       )}
-    </div>
+    </>
   );
 }
