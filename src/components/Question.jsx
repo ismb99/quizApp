@@ -11,6 +11,8 @@ export default function Question(props) {
     setRadioBtnValue(selectedValue);
   }
 
+  console.log(radioBtnValue);
+
   // function shuffleAnswers(array) {
   //   return array.sort(() => Math.random() - 0.5);
   // }
@@ -25,13 +27,7 @@ export default function Question(props) {
           const uniqueId = nanoid(); // Generate unik nanoid
           const isSelectedValue = radioBtnValue === answer;
           return (
-            <div
-              style={{
-                backgroundColor: isSelectedValue ? "green" : "transparent",
-              }}
-              key={answerIndex}
-              className="radio-toolbar"
-            >
+            <div key={answerIndex} className="radio-toolbar">
               <input
                 // style={radioStyle}
                 type="radio"
@@ -46,7 +42,7 @@ export default function Question(props) {
               />
               <label
                 style={{
-                  backgroundColor: isSelectedValue ? "green" : "transparent",
+                  backgroundColor: isSelectedValue ? "#d6dbf5" : "transparent",
                 }}
                 className="radio-button-label"
                 htmlFor={uniqueId} // Use same unik nanoId from id in htmlfor
