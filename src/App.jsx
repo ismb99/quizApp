@@ -5,87 +5,105 @@ import Question from "./components/Question";
 import Start from "./components/Start";
 
 export default function App() {
-  const [quizData, setQuizData] = useState([]);
-  const [allAnswers, setAllAnswers] = useState([]); // Håll reda på alla svar här
+  const [quizQuestions, setQuizQuestions] = useState([]);
+  const [selectedAnswers, setSelectedAnswers] = useState([]);
   const [correctAnswers, setCorrectAnswers] = useState([]);
-  const [score, setScore] = useState(0);
-  const [startGame, setStartGame] = useState(true);
-
+  const [quizScore, setQuizScore] = useState(0);
+  const [quizStarted, setQuizStarted] = useState(true);
+  const [userChoices, setUserChoices] = useState([]);
+  // Fetch quiz from api
   useEffect(() => {
     fetch("https://opentdb.com/api.php?amount=5&difficulty=easy&type=multiple")
       .then((res) => res.json())
       .then((data) => {
-        const decodedData = data.results.map((quiz) => ({
-          ...quiz,
-          question: he.decode(quiz.question),
-
-          answers: [
-            ...quiz.incorrect_answers.map((answer) => he.decode(answer)),
-            he.decode(quiz.correct_answer),
+        const decodedData = data.results.map((question) => ({
+          ...question,
+          question: he.decode(question.question),
+          isSelected: false,
+          answerOptions: [
+            ...question.incorrect_answers.map((answer) => he.decode(answer)),
+            he.decode(question.correct_answer),
           ],
         }));
-        setQuizData(decodedData);
-        const correctAnswers = decodedData.map((quiz) => quiz.correct_answer);
+        setQuizQuestions(decodedData);
+        const correctAnswers = decodedData.map(
+          (question) => question.correct_answer
+        );
         setCorrectAnswers(correctAnswers);
       });
   }, []);
 
-  function saveAllAnswers(currentValue) {
-    if (!allAnswers.includes(currentValue)) {
-      setAllAnswers((prevState) => {
-        if (prevState.length < 5) {
-          return [...prevState, currentValue];
+  // saves users answers from the radio input to the allAnswers state. currentValue is evry answer user choose
+  // The Array lenght is always 5
+  function saveSelectedAnswer(currentValue) {
+    if (!selectedAnswers.includes(currentValue)) {
+      setSelectedAnswers((prevSelectedAnswers) => {
+        if (prevSelectedAnswers.length < 5) {
+          return [...prevSelectedAnswers, currentValue];
         }
-        return prevState;
+        return prevSelectedAnswers;
       });
     }
   }
 
-  function compareArrays(a, b) {
+  function compareSelectedAndCorrectAnswers(selected, correct) {
     let count = 0;
-    if (a.length !== b.length) return false;
+    if (selected.length !== correct.length) return false;
     else {
-      for (var i = 0; i < a.length; i++) {
-        if (a[i] === b[i]) count = count + 1;
+      for (let i = 0; i < selected.length; i++) {
+        if (selected[i] === correct[i]) count = count + 1;
       }
     }
-    setScore(count);
-    console.log(`You got ${count} of ${a.length}`);
+    setQuizScore(count);
   }
 
   function startQuiz() {
-    setStartGame(false);
+    setQuizStarted(false);
   }
 
-  const questionElements = quizData.map((quiz, index) => (
+  const questionElements = quizQuestions.map((question, index) => (
     <Question
       key={index}
-      correct_answer={quiz.correct_answer}
-      question={quiz.question}
-      incorrect_answers={quiz.incorrect_answers}
-      answers={quiz.answers}
-      saveAllAnswers={saveAllAnswers}
-      allAnswers={allAnswers}
+      correct_answer={question.correct_answer}
+      question={question.question} // Question
+      incorrect_answers={question.incorrect_answers}
+      answers={question.answerOptions}
+      saveSelectedAnswer={saveSelectedAnswer}
+      selectedAnswers={selectedAnswers}
     />
   ));
 
+  // const questionElements = quizQuestions.map((question, index) => (
+  //   <Question
+  //     key={index}
+  //     question={question}
+  //     saveSelectedAnswer={saveSelectedAnswer}
+  //     selectedAnswers={selectedAnswers}
+  //   />
+  // ));
+
   return (
     <>
-      {startGame ? (
+      {quizStarted ? (
         <Start startQuiz={startQuiz} />
       ) : (
         <div className="container">
-          {quizData.length > 0 ? (
+          {quizQuestions.length > 0 ? (
             <div>
               {questionElements}
               <div>
                 <button
-                  onClick={() => compareArrays(allAnswers, correctAnswers)}
+                  onClick={() =>
+                    compareSelectedAndCorrectAnswers(
+                      selectedAnswers,
+                      correctAnswers
+                    )
+                  }
                 >
                   Check answers
                 </button>
                 <h2>
-                  You got: {score} of {allAnswers.length}
+                  You got: {quizScore} of {selectedAnswers.length}
                 </h2>
               </div>
             </div>
