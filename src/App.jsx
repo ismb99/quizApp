@@ -10,8 +10,8 @@ export default function App() {
   const [correctAnswers, setCorrectAnswers] = useState([]);
   const [quizScore, setQuizScore] = useState(0);
   const [quizStarted, setQuizStarted] = useState(true);
-  const [userChoices, setUserChoices] = useState([]);
-  // Fetch quiz from api
+  const [gameFinished, setGameFinished] = useState(false);
+
   useEffect(() => {
     fetch("https://opentdb.com/api.php?amount=5&difficulty=easy&type=multiple")
       .then((res) => res.json())
@@ -31,7 +31,7 @@ export default function App() {
         );
         setCorrectAnswers(correctAnswers);
       });
-  }, []);
+  }, [gameFinished]);
 
   // saves users answers from the radio input to the allAnswers state. currentValue is evry answer user choose
   // The Array lenght is always 5
@@ -55,6 +55,14 @@ export default function App() {
       }
     }
     setQuizScore(count);
+    setGameFinished(true);
+  }
+
+  function resetGame() {
+    setSelectedAnswers([]);
+    setQuizScore(0);
+    setGameFinished(false);
+    setQuizStarted(true);
   }
 
   function startQuiz() {
@@ -70,17 +78,9 @@ export default function App() {
       answers={question.answerOptions}
       saveSelectedAnswer={saveSelectedAnswer}
       selectedAnswers={selectedAnswers}
+      gameFinished={gameFinished}
     />
   ));
-
-  // const questionElements = quizQuestions.map((question, index) => (
-  //   <Question
-  //     key={index}
-  //     question={question}
-  //     saveSelectedAnswer={saveSelectedAnswer}
-  //     selectedAnswers={selectedAnswers}
-  //   />
-  // ));
 
   return (
     <>
@@ -88,28 +88,50 @@ export default function App() {
         <Start startQuiz={startQuiz} />
       ) : (
         <div className="container">
-          {quizQuestions.length > 0 ? (
-            <div>
-              {questionElements}
+          <div className="question-card">
+            {quizQuestions.length > 0 ? (
               <div>
-                <button
-                  onClick={() =>
-                    compareSelectedAndCorrectAnswers(
-                      selectedAnswers,
-                      correctAnswers
-                    )
-                  }
-                >
-                  Check answers
-                </button>
-                <h2>
-                  You got: {quizScore} of {selectedAnswers.length}
-                </h2>
+                {questionElements}
+                <div>
+                  {gameFinished ? (
+                    <div className="score">
+                      <p className="socre-text">
+                        {`You scored ${quizScore}/${selectedAnswers.length} correct answers`}
+                      </p>
+                      <button className="btn-play-again" onClick={resetGame}>
+                        Play again
+                      </button>
+                    </div>
+                  ) : (
+                    <button
+                      className="checkAnswer-btn"
+                      onClick={() =>
+                        compareSelectedAndCorrectAnswers(
+                          selectedAnswers,
+                          correctAnswers
+                        )
+                      }
+                    >
+                      Check answers
+                    </button>
+                  )}
+                  {/* <button
+                    className="checkAnswer-btn"
+                    onClick={() =>
+                      compareSelectedAndCorrectAnswers(
+                        selectedAnswers,
+                        correctAnswers
+                      )
+                    }
+                  >
+                    Check answers
+                  </button> */}
+                </div>
               </div>
-            </div>
-          ) : (
-            <p>Loading...</p>
-          )}
+            ) : (
+              <p>Loading...</p>
+            )}
+          </div>
         </div>
       )}
     </>
