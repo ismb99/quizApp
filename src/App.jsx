@@ -11,20 +11,29 @@ export default function App() {
   const [quizScore, setQuizScore] = useState(0);
   const [quizStarted, setQuizStarted] = useState(true);
   const [gameFinished, setGameFinished] = useState(false);
+  const [setshuffeldAnswers, setSetshuffeldAnswers] = useState([]);
+
+  console.log(correctAnswers);
 
   useEffect(() => {
     fetch("https://opentdb.com/api.php?amount=5&difficulty=easy&type=multiple")
       .then((res) => res.json())
       .then((data) => {
-        const decodedData = data.results.map((question) => ({
-          ...question,
-          question: he.decode(question.question),
-          isSelected: false,
-          answerOptions: [
+        const decodedData = data.results.map((question) => {
+          const answerOptions = [
             ...question.incorrect_answers.map((answer) => he.decode(answer)),
             he.decode(question.correct_answer),
-          ],
-        }));
+          ];
+          // Shuffle answers for this question
+          answerOptions.sort(() => Math.random() - 0.5);
+
+          return {
+            ...question,
+            question: he.decode(question.question),
+            isSelected: false,
+            answerOptions: answerOptions, // use the shuffled answerOptions here
+          };
+        });
         setQuizQuestions(decodedData);
         const correctAnswers = decodedData.map(
           (question) => question.correct_answer
@@ -32,6 +41,10 @@ export default function App() {
         setCorrectAnswers(correctAnswers);
       });
   }, [gameFinished]);
+
+  // function shuffleAnswers(array) {
+  //   return array.sort(() => Math.random() - 0.5);
+  // }
 
   // saves users answers from the radio input to the allAnswers state. currentValue is evry answer user choose
   // The Array lenght is always 5
@@ -79,6 +92,7 @@ export default function App() {
       saveSelectedAnswer={saveSelectedAnswer}
       selectedAnswers={selectedAnswers}
       gameFinished={gameFinished}
+      setshuffeldAnswers={setshuffeldAnswers}
     />
   ));
 

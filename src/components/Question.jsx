@@ -3,6 +3,7 @@ import { nanoid } from "nanoid";
 
 export default function Question(props) {
   const [radioBtnValue, setRadioBtnValue] = useState("");
+
   // function takes user input from radio button and store the answer in allAnswers array
   function handleAnswerChange(event) {
     const { value, type, checked } = event.target;
@@ -10,15 +11,6 @@ export default function Question(props) {
     props.saveSelectedAnswer(selectedValue);
     setRadioBtnValue(selectedValue);
   }
-  // function shuffleAnswers(array) {
-  //   return array.sort(() => Math.random() - 0.5);
-  // }
-  // const shuf = props.answers;
-  // shuffleAnswers(shuf);
-
-  // function for bg color wrong & correcet answers
-  // use radioBtnValue === answer?
-  // Do i need gameFinished?
 
   return (
     <>
