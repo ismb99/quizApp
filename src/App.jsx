@@ -3,6 +3,8 @@ import he from "he";
 import "./index.css";
 import Question from "./components/Question";
 import Start from "./components/Start";
+import Loader from "./components/loader";
+import toast, { Toaster } from "react-hot-toast";
 
 export default function App() {
   const [quizQuestions, setQuizQuestions] = useState([]);
@@ -11,12 +13,13 @@ export default function App() {
   const [quizScore, setQuizScore] = useState(0);
   const [quizStarted, setQuizStarted] = useState(true);
   const [gameFinished, setGameFinished] = useState(false);
-  const [setshuffeldAnswers, setSetshuffeldAnswers] = useState([]);
-
-  console.log(correctAnswers);
+  const [difficulty, setDifficulty] = useState("easy");
+  const [category, setCategory] = useState("10");
 
   useEffect(() => {
-    fetch("https://opentdb.com/api.php?amount=5&difficulty=easy&type=multiple")
+    const apiUrl = `https://opentdb.com/api.php?amount=5&category=${category}&difficulty=${difficulty}&type=multiple`;
+
+    fetch(apiUrl)
       .then((res) => res.json())
       .then((data) => {
         const decodedData = data.results.map((question) => {
@@ -24,14 +27,11 @@ export default function App() {
             ...question.incorrect_answers.map((answer) => he.decode(answer)),
             he.decode(question.correct_answer),
           ];
-          // Shuffle answers for this question
           answerOptions.sort(() => Math.random() - 0.5);
-
           return {
             ...question,
             question: he.decode(question.question),
-            isSelected: false,
-            answerOptions: answerOptions, // use the shuffled answerOptions here
+            answerOptions: answerOptions,
           };
         });
         setQuizQuestions(decodedData);
@@ -40,14 +40,8 @@ export default function App() {
         );
         setCorrectAnswers(correctAnswers);
       });
-  }, [gameFinished]);
+  }, [quizStarted, category, difficulty]);
 
-  // function shuffleAnswers(array) {
-  //   return array.sort(() => Math.random() - 0.5);
-  // }
-
-  // saves users answers from the radio input to the allAnswers state. currentValue is evry answer user choose
-  // The Array lenght is always 5
   function saveSelectedAnswer(currentValue) {
     if (!selectedAnswers.includes(currentValue)) {
       setSelectedAnswers((prevSelectedAnswers) => {
@@ -61,8 +55,11 @@ export default function App() {
 
   function compareSelectedAndCorrectAnswers(selected, correct) {
     let count = 0;
-    if (selected.length !== correct.length) return false;
-    else {
+    console.log(selected, "slected", correct);
+    if (selected.length !== correct.length) {
+      toast.error("Answer All Questions");
+      return;
+    } else {
       for (let i = 0; i < selected.length; i++) {
         if (selected[i] === correct[i]) count = count + 1;
       }
@@ -76,6 +73,8 @@ export default function App() {
     setQuizScore(0);
     setGameFinished(false);
     setQuizStarted(true);
+    setDifficulty("easy");
+    setCategory("10");
   }
 
   function startQuiz() {
@@ -86,20 +85,24 @@ export default function App() {
     <Question
       key={index}
       correct_answer={question.correct_answer}
-      question={question.question} // Question
+      question={question.question}
       incorrect_answers={question.incorrect_answers}
       answers={question.answerOptions}
       saveSelectedAnswer={saveSelectedAnswer}
       selectedAnswers={selectedAnswers}
       gameFinished={gameFinished}
-      setshuffeldAnswers={setshuffeldAnswers}
     />
   ));
 
   return (
     <>
+      <Toaster />
       {quizStarted ? (
-        <Start startQuiz={startQuiz} />
+        <Start
+          startQuiz={startQuiz}
+          setDifficulty={setDifficulty}
+          setCategory={setCategory}
+        />
       ) : (
         <div className="container">
           <div className="question-card">
@@ -129,21 +132,10 @@ export default function App() {
                       Check answers
                     </button>
                   )}
-                  {/* <button
-                    className="checkAnswer-btn"
-                    onClick={() =>
-                      compareSelectedAndCorrectAnswers(
-                        selectedAnswers,
-                        correctAnswers
-                      )
-                    }
-                  >
-                    Check answers
-                  </button> */}
                 </div>
               </div>
             ) : (
-              <p>Loading...</p>
+              <Loader />
             )}
           </div>
         </div>
