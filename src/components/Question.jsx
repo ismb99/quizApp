@@ -2,20 +2,25 @@ import { useState } from "react";
 import { nanoid } from "nanoid";
 
 export default function Question(props) {
-  const [radioBtnValue, setRadioBtnValue] = useState("");
+  const [selectedAnswer, setSelectedAnswer] = useState("");
+
+  // function handleAnswerChange(event) {
+  //   const { value } = event.target;
+  //   setSelectedAnswer(value);
+  //   props.saveSelectedAnswer(value);
+  // }
 
   function handleAnswerChange(event) {
-    const { value, type, checked } = event.target;
-    const selectedValue = type === "checkbox" ? checked : value;
-    props.saveSelectedAnswer(selectedValue);
-    setRadioBtnValue(selectedValue);
+    const { value } = event.target;
+    setSelectedAnswer(value);
+    props.saveSelectedAnswer(value, props.questionIndex);
   }
 
   const getAnswerHighlightClass = (answer) => {
     if (props.gameFinished) {
       return props.correct_answer === answer
         ? "correct-answer"
-        : props.selectedAnswers.includes(answer)
+        : selectedAnswer === answer
         ? "incorrect-answer"
         : "";
     }
@@ -28,22 +33,24 @@ export default function Question(props) {
       <div className="card-row">
         {props.answers.map((answer, answerIndex) => {
           const uniqueId = nanoid();
-          const isSelectedValue = radioBtnValue === answer;
           return (
             <div key={answerIndex} className="radio-toolbar">
               <input
                 type="radio"
                 id={uniqueId}
-                name={`answers ${props.question} - ${answerIndex}`}
+                name={`answers-${props.question}`} // Use a unique name for each question
                 value={answer}
-                checked={props.selectedAnswers[props.question] === answer}
+                checked={selectedAnswer === answer}
                 onChange={handleAnswerChange}
               />
               <label
                 style={{
-                  backgroundColor: isSelectedValue ? "#d6dbf5" : "transparent",
+                  backgroundColor:
+                    selectedAnswer === answer ? "#d6dbf5" : "transparent",
                 }}
-                className={`${getAnswerHighlightClass(answer)}`}
+                className={`radio-button-label ${getAnswerHighlightClass(
+                  answer
+                )}`}
                 htmlFor={uniqueId}
               >
                 {answer}

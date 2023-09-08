@@ -42,15 +42,23 @@ export default function App() {
       });
   }, [quizStarted, category, difficulty]);
 
-  function saveSelectedAnswer(currentValue) {
-    if (!selectedAnswers.includes(currentValue)) {
-      setSelectedAnswers((prevSelectedAnswers) => {
-        if (prevSelectedAnswers.length < 5) {
-          return [...prevSelectedAnswers, currentValue];
-        }
-        return prevSelectedAnswers;
-      });
-    }
+  // function saveSelectedAnswer(currentValue) {
+  //   if (!selectedAnswers.includes(currentValue)) {
+  //     setSelectedAnswers((prevSelectedAnswers) => {
+  //       if (prevSelectedAnswers.length < 5) {
+  //         return [...prevSelectedAnswers, currentValue];
+  //       }
+  //       return prevSelectedAnswers;
+  //     });
+  //   }
+  // }
+
+  function saveSelectedAnswer(currentValue, questionIndex) {
+    setSelectedAnswers((prevSelectedAnswers) => {
+      const newAnswers = [...prevSelectedAnswers];
+      newAnswers[questionIndex] = currentValue;
+      return newAnswers;
+    });
   }
 
   function compareSelectedAndCorrectAnswers(selected, correct) {
@@ -81,9 +89,23 @@ export default function App() {
     setQuizStarted(false);
   }
 
+  // const questionElements = quizQuestions.map((question, index) => (
+  //   <Question
+  //     key={index}
+  //     correct_answer={question.correct_answer}
+  //     question={question.question}
+  //     incorrect_answers={question.incorrect_answers}
+  //     answers={question.answerOptions}
+  //     saveSelectedAnswer={saveSelectedAnswer}
+  //     selectedAnswers={selectedAnswers}
+  //     gameFinished={gameFinished}
+  //   />
+  // ));
+
   const questionElements = quizQuestions.map((question, index) => (
     <Question
       key={index}
+      questionIndex={index} // pass the index here
       correct_answer={question.correct_answer}
       question={question.question}
       incorrect_answers={question.incorrect_answers}
