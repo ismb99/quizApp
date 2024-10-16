@@ -1,14 +1,8 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { nanoid } from "nanoid";
 
 export default function Question(props) {
   const [selectedAnswer, setSelectedAnswer] = useState("");
-
-  // function handleAnswerChange(event) {
-  //   const { value } = event.target;
-  //   setSelectedAnswer(value);
-  //   props.saveSelectedAnswer(value);
-  // }
 
   function handleAnswerChange(event) {
     const { value } = event.target;
@@ -19,39 +13,44 @@ export default function Question(props) {
   const getAnswerHighlightClass = (answer) => {
     if (props.gameFinished) {
       return props.correct_answer === answer
-        ? "correct-answer"
+        ? "bg-green-100 border-green-500 text-green-800"
         : selectedAnswer === answer
-        ? "incorrect-answer"
-        : "";
+        ? "bg-red-100 border-red-500 text-red-800"
+        : "opacity-50";
     }
     return "";
   };
 
   return (
-    <>
-      <h2 className="question-text">{props.question}</h2>
-      <div className="card-row">
+    <div className="bg-white rounded-xl shadow-lg overflow-hidden transition-all duration-300 hover:shadow-xl">
+      <div className="bg-cyan-600 p-4">
+        <h2 className="text-lg font-semibold text-white">{props.question}</h2>
+      </div>
+      <div className="p-4">
         {props.answers.map((answer, answerIndex) => {
           const uniqueId = nanoid();
           return (
-            <div key={answerIndex} className="radio-toolbar">
+            <div key={answerIndex} className="mb-2 last:mb-0">
               <input
                 type="radio"
                 id={uniqueId}
-                name={`answers-${props.question}`} // Use a unique name for each question
+                name={`answers-${props.questionIndex}`}
                 value={answer}
                 checked={selectedAnswer === answer}
                 onChange={handleAnswerChange}
+                className="hidden peer"
+                disabled={props.gameFinished}
               />
               <label
-                style={{
-                  backgroundColor:
-                    selectedAnswer === answer ? "#d6dbf5" : "transparent",
-                }}
-                className={`radio-button-label ${getAnswerHighlightClass(
-                  answer
-                )}`}
                 htmlFor={uniqueId}
+                className={`block w-full p-3 text-sm border rounded-md cursor-pointer transition-all duration-300 
+                ${
+                  selectedAnswer === answer
+                    ? "bg-cyan-100 border-cyan-500"
+                    : "bg-gray-50 border-gray-200"
+                } 
+                ${getAnswerHighlightClass(answer)}
+                hover:bg-cyan-50 peer-checked:bg-cyan-100 peer-checked:border-cyan-500`}
               >
                 {answer}
               </label>
@@ -59,7 +58,6 @@ export default function Question(props) {
           );
         })}
       </div>
-      <hr />
-    </>
+    </div>
   );
 }
